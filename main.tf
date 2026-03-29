@@ -39,8 +39,7 @@ resource "null_resource" "ansible" {
       password = "DevOps321"
     }
     inline = [
-      "sudo dnf install python3.13-pip.noarch -y",
-      "sudo pip3.13 install ansible",
+      "sudo labauto ansible",
       "ansible-pull -i localhost, -U https://github.com/phanikolluri/wmp-ansible-v4.git main.yml -e env=dev -e COMPONENT=${each.key}"
     ]
   }
