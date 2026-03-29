@@ -35,8 +35,8 @@ resource "null_resource" "ansible" {
     connection {
       type = "ssh"
       host = aws_instance.instance[each.key].public_ip
-      user = ec2-user
-      password = DevOps321
+      user = "ec2-user"
+      password = "DevOps321"
     }
     inline = [
       "sudo dnf install python3.13-pip.noarch -y",
