@@ -1,5 +1,5 @@
 resource "aws_instance" "instance" {
-  for_each =  var.COMPONENTS
+  for_each =  var.components
   ami           = "ami-0220d79f3f480ecf5"
   instance_type = "t3.small"
   vpc_security_group_ids = ["sg-0ce01673ed9893e29"]
@@ -10,7 +10,7 @@ resource "aws_instance" "instance" {
 }
 
 resource "aws_route53_record" "dns" {
-  for_each = var.COMPONENTS
+  for_each = var.components
   zone_id = "Z02549774QMYGMZM7W06"
   name    = "${each.key}-dev"
   type    = "A"
@@ -18,19 +18,19 @@ resource "aws_route53_record" "dns" {
   records = [aws_instance.instance[each.key].private_ip]
 }
 
-variable "COMPONENTS" {
+variable "components" {
   default = {
-    frontend = "",
-    postgresql = "",
-    auth-service = "",
-    portfolio-service = "",
+    frontend = ""
+    postgresql = ""
+    auth-service = ""
+    portfolio-service = ""
     analytics-service = ""
   }
 }
 
 resource "null_resource" "ansible" {
   depends_on = [aws_route53_record.dns]
-  for_each = var.COMPONENTS
+  for_each = var.components
   provisioner "remote-exec" {
     connection {
       type = "ssh"
@@ -41,7 +41,7 @@ resource "null_resource" "ansible" {
     inline = [
       "sudo dnf install python3.13-pip.noarch -y",
       "sudo pip3.13 install ansible",
-      "ansible-pull -i localhost, -U https://github.com/phanikolluri/wmp-ansible-v4.git main.yml -e env=dev -e COMPONENT=${each.key} "
+      "ansible-pull -i localhost, -U https://github.com/phanikolluri/wmp-ansible-v4.git main.yml -e env=dev -e COMPONENT=${each.key}"
     ]
   }
 }
